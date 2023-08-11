@@ -2,9 +2,53 @@
   "_format": "hh-sol-cache-2",
   "files": {
     "/Users/apple/Documents/Dev/web3/hardhat-raffle/contracts/Raffle.sol": {
-      "lastModificationDate": 1691420309073,
-      "contentHash": "ce9a18d5510a8247835a6c4b6f9b6eb9",
+      "lastModificationDate": 1691743459689,
+      "contentHash": "50c17574af8e5c8e96c9b27aa3142588",
       "sourceName": "contracts/Raffle.sol",
+      "solcConfig": {
+        "version": "0.8.19",
+        "settings": {
+          "optimizer": {
+            "enabled": false,
+            "runs": 200
+          },
+          "outputSelection": {
+            "*": {
+              "*": [
+                "abi",
+                "evm.bytecode",
+                "evm.deployedBytecode",
+                "evm.methodIdentifiers",
+                "metadata",
+                "devdoc",
+                "userdoc",
+                "storageLayout",
+                "evm.gasEstimates"
+              ],
+              "": [
+                "ast"
+              ]
+            }
+          },
+          "metadata": {
+            "useLiteralContent": true
+          }
+        }
+      },
+      "imports": [
+        "@chainlink/contracts/src/v0.8/VRFConsumerBaseV2.sol"
+      ],
+      "versionPragmas": [
+        "^0.8.19"
+      ],
+      "artifacts": [
+        "Raffle"
+      ]
+    },
+    "/Users/apple/Documents/Dev/web3/hardhat-raffle/node_modules/@chainlink/contracts/src/v0.8/VRFConsumerBaseV2.sol": {
+      "lastModificationDate": 1691697543248,
+      "contentHash": "eb9cc526ef59dfc4d644f56ddca0633a",
+      "sourceName": "@chainlink/contracts/src/v0.8/VRFConsumerBaseV2.sol",
       "solcConfig": {
         "version": "0.8.19",
         "settings": {
@@ -37,10 +81,10 @@
       },
       "imports": [],
       "versionPragmas": [
-        "^0.8.19"
+        "^0.8.4"
       ],
       "artifacts": [
-        "Raffle"
+        "VRFConsumerBaseV2"
       ]
     }
   }
