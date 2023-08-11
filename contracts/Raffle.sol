@@ -11,15 +11,27 @@ contract Raffle is VRFConsumerBaseV2 {
     uint256 private immutable i_entracefee; // immutable variables are cheap (gas wise)
     address payable[] private s_players; // we added the paybale keyword because one of the address would be the winner and would recieve eth.
     VRFCoordinatorV2Interface private immutable i_vrfCoordinator;
+    bytes32 private immutable i_gasLane;
+    uint16 private immutable i_subscription;
+    uint16 private constant CONFIRMATION_REQUEST = 3;
+    uint32 private immutable i_callbackGasLimit;
+    uint32 private constant NUM_WORDS = 1;
     // Events
-    event RaffleEnter(address indexed player); // create an event
+    event RaffleEnter(address indexed player);
+    event RequestedRaffleWinner(uint256 indexed requestId);
 
     constructor(
         address vrfCoordinatorV2,
-        uint256 entrancefee
+        uint256 entrancefee,
+        bytes32 gasLane,
+        uint16 subscription,
+        uint32 callbackGasLimit
     ) VRFConsumerBaseV2(vrfCoordinatorV2) {
         i_vrfCoordinator = VRFCoordinatorV2Interface(vrfCoordinatorV2);
         i_entracefee = entrancefee;
+        i_gasLane = gasLane;
+        i_subscription = subscription;
+        i_callbackGasLimit = callbackGasLimit;
     }
 
     // Enter Raffle
@@ -32,7 +44,17 @@ contract Raffle is VRFConsumerBaseV2 {
     }
 
     // Pick Random Winner using chainlink VRF
-    function requestRandomWinner() external {}
+    function requestRandomWinner() external {
+        // Will revert if subscription is not set and funded.
+        uint256 requestId = i_vrfCoordinator.requestRandomWords(
+            i_gasLane, // gasLane
+            i_subscription,
+            CONFIRMATION_REQUEST,
+            i_callbackGasLimit,
+            NUM_WORDS
+        );
+        emit RequestedRaffleWinner(requestId);
+    }
 
     function fulfillRandomWords(
         uint256 requestId,
