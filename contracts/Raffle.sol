@@ -1,6 +1,12 @@
 // SPDX-License-Identifier: MIT
 pragma solidity ^0.8.19;
 error Raffle__NotEnoughtETH();
+error Raffle___WithdrawalFailed();
+
+// Raffle Steps
+// 1. Enter the Lottery
+// 2. Pick a Random Winner(Verifiably Random)
+// 3. Winner to be Selected every X minute (Completely Automated)
 
 // import chainlink contracts
 import "@chainlink/contracts/src/v0.8/VRFConsumerBaseV2.sol";
@@ -16,9 +22,13 @@ contract Raffle is VRFConsumerBaseV2 {
     uint16 private constant CONFIRMATION_REQUEST = 3;
     uint32 private immutable i_callbackGasLimit;
     uint32 private constant NUM_WORDS = 1;
+    address[] private s_winners;
     // Events
     event RaffleEnter(address indexed player);
     event RequestedRaffleWinner(uint256 indexed requestId);
+    event RequestedRaffleWinners(address[] indexed winners);
+    // Lottery Variables
+    address private s_recentWinner;
 
     constructor(
         address vrfCoordinatorV2,
@@ -57,9 +67,22 @@ contract Raffle is VRFConsumerBaseV2 {
     }
 
     function fulfillRandomWords(
-        uint256 requestId,
+        uint256,
+        // requestId,
         uint256[] memory randomWords
-    ) internal override {}
+    ) internal override {
+        uint256 indexOfWinner = randomWords[0] % s_players.length;
+        address payable recentWinner = s_players[indexOfWinner];
+        s_recentWinner = recentWinner;
+        (bool callSuccess, ) = recentWinner.call{value: address(this).balance}(
+            ""
+        );
+        if (!callSuccess) {
+            revert Raffle___WithdrawalFailed();
+        }
+        s_winners.push(s_recentWinner);
+        emit RequestedRaffleWinners(s_winners);
+    }
 
     // View and Pure Functions
     // Get Entrance Fee
@@ -69,5 +92,13 @@ contract Raffle is VRFConsumerBaseV2 {
 
     function getPlayers(uint256 index) public view returns (address) {
         return s_players[index];
+    }
+
+    function getRecentWinner() public view returns (address) {
+        return s_recentWinner;
+    }
+
+    function getRecentWinners() public view returns (address[] memory) {
+        return s_winners;
     }
 }
