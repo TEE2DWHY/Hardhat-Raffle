@@ -36,13 +36,16 @@ contract Raffle is VRFConsumerBaseV2, AutomationCompatibleInterface {
     // Lottery Variables
     address private s_recentWinner;
     RaffleState private s_raffleState;
+    uint256 private s_lastBlockTimeStamp;
+    uint256 private immutable i_interval;
 
     constructor(
         address vrfCoordinatorV2,
         uint256 entrancefee,
         bytes32 gasLane,
         uint16 subscription,
-        uint32 callbackGasLimit
+        uint32 callbackGasLimit,
+        uint256 interval
     ) VRFConsumerBaseV2(vrfCoordinatorV2) {
         i_vrfCoordinator = VRFCoordinatorV2Interface(vrfCoordinatorV2);
         i_entracefee = entrancefee;
@@ -50,6 +53,8 @@ contract Raffle is VRFConsumerBaseV2, AutomationCompatibleInterface {
         i_subscription = subscription;
         i_callbackGasLimit = callbackGasLimit;
         s_raffleState = RaffleState.OPEN;
+        s_lastBlockTimeStamp = block.timestamp;
+        i_interval = interval;
     }
 
     // Enter Raffle
@@ -64,7 +69,21 @@ contract Raffle is VRFConsumerBaseV2, AutomationCompatibleInterface {
         emit RaffleEnter(msg.sender); // emit even with the address of a player (we emit an event when we update a dynamic array or mapping)
     }
 
-    function checkUpkeep(bytes calldata /*checkData*/) external override {}
+    function checkUpkeep(
+        bytes calldata /*checkData*/
+    )
+        external
+        view
+        override
+        returns (bool upKeepNeeded, bytes memory /* performData */)
+    {
+        bool isOpen = RaffleState.OPEN == s_raffleState;
+        bool timePassed = ((block.timestamp - s_lastBlockTimeStamp) >
+            i_interval);
+        bool hasPlayers = (s_players.length > 0);
+        bool hasBalance = (address(this).balance > 0);
+        upKeepNeeded = (isOpen && timePassed && hasPlayers && hasBalance); // if all this is true its time to request a new random number and it is time to end the lottery.
+    }
 
     // Pick Random Winner using chainlink VRF
     function requestRandomWinner() external {
@@ -89,6 +108,7 @@ contract Raffle is VRFConsumerBaseV2, AutomationCompatibleInterface {
         address payable recentWinner = s_players[indexOfWinner];
         s_recentWinner = recentWinner;
         s_raffleState = RaffleState.OPEN;
+        s_players = new address payable[](0); // we reset our players array after selecting a winner
         (bool callSuccess, ) = recentWinner.call{value: address(this).balance}(
             ""
         );
