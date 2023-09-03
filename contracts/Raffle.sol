@@ -3,6 +3,11 @@ pragma solidity ^0.8.19;
 error Raffle__NotEnoughtETH();
 error Raffle___WithdrawalFailed();
 error Raffle__RaflleIsClosed();
+error Raffle__upKeepNotNeeded(
+    uint256 currentBalance,
+    uint256 numberOfPlayers,
+    uint256 raffleState
+);
 // Raffle Steps
 // 1. Enter the Lottery
 // 2. Pick a Random Winner(Verifiably Random)
@@ -70,9 +75,9 @@ contract Raffle is VRFConsumerBaseV2, AutomationCompatibleInterface {
     }
 
     function checkUpkeep(
-        bytes calldata /*checkData*/
+        bytes memory /*checkData*/
     )
-        external
+        public
         view
         override
         returns (bool upKeepNeeded, bytes memory /* performData */)
@@ -83,10 +88,20 @@ contract Raffle is VRFConsumerBaseV2, AutomationCompatibleInterface {
         bool hasPlayers = (s_players.length > 0);
         bool hasBalance = (address(this).balance > 0);
         upKeepNeeded = (isOpen && timePassed && hasPlayers && hasBalance); // if all this is true its time to request a new random number and it is time to end the lottery.
+        return (upKeepNeeded, bytes(""));
     }
 
     // Pick Random Winner using chainlink VRF
-    function requestRandomWinner() external {
+    function performUpkeep(bytes calldata /*performData */) external override {
+        (bool upKeePNeeded, ) = checkUpkeep(bytes(" "));
+        if (!upKeePNeeded) {
+            revert Raffle__upKeepNotNeeded(
+                address(this).balance,
+                s_players.length,
+                uint256(s_raffleState)
+            );
+        }
+
         // Will revert if subscription is not set and funded.
         s_raffleState = RaffleState.CALCULATING;
         uint256 requestId = i_vrfCoordinator.requestRandomWords(
@@ -109,6 +124,7 @@ contract Raffle is VRFConsumerBaseV2, AutomationCompatibleInterface {
         s_recentWinner = recentWinner;
         s_raffleState = RaffleState.OPEN;
         s_players = new address payable[](0); // we reset our players array after selecting a winner
+        s_lastBlockTimeStamp = block.timestamp; // we reset timestamp after selecting a winner
         (bool callSuccess, ) = recentWinner.call{value: address(this).balance}(
             ""
         );
