@@ -2,7 +2,7 @@
 pragma solidity ^0.8.19;
 error Raffle__NotEnoughtETH();
 error Raffle___WithdrawalFailed();
-
+error Raffle__RaflleIsClosed();
 // Raffle Steps
 // 1. Enter the Lottery
 // 2. Pick a Random Winner(Verifiably Random)
@@ -11,8 +11,14 @@ error Raffle___WithdrawalFailed();
 // import chainlink contracts
 import "@chainlink/contracts/src/v0.8/VRFConsumerBaseV2.sol";
 import "@chainlink/contracts/src/v0.8/interfaces/VRFCoordinatorV2Interface.sol";
+import "@chainlink/contracts/src/v0.8/AutomationCompatible.sol";
 
-contract Raffle is VRFConsumerBaseV2 {
+contract Raffle is VRFConsumerBaseV2, AutomationCompatibleInterface {
+    // Type Declaration
+    enum RaffleState {
+        OPEN,
+        CALCULATING
+    }
     // State Variales
     uint256 private immutable i_entracefee; // immutable variables are cheap (gas wise)
     address payable[] private s_players; // we added the paybale keyword because one of the address would be the winner and would recieve eth.
@@ -29,6 +35,7 @@ contract Raffle is VRFConsumerBaseV2 {
     event RequestedRaffleWinners(address[] indexed winners);
     // Lottery Variables
     address private s_recentWinner;
+    RaffleState private s_raffleState;
 
     constructor(
         address vrfCoordinatorV2,
@@ -42,10 +49,14 @@ contract Raffle is VRFConsumerBaseV2 {
         i_gasLane = gasLane;
         i_subscription = subscription;
         i_callbackGasLimit = callbackGasLimit;
+        s_raffleState = RaffleState.OPEN;
     }
 
     // Enter Raffle
     function enterRaffle() public payable {
+        if (s_raffleState != RaffleState.OPEN) {
+            revert Raffle__RaflleIsClosed();
+        }
         if (msg.value < i_entracefee) {
             revert Raffle__NotEnoughtETH();
         }
@@ -53,9 +64,12 @@ contract Raffle is VRFConsumerBaseV2 {
         emit RaffleEnter(msg.sender); // emit even with the address of a player (we emit an event when we update a dynamic array or mapping)
     }
 
+    function checkUpkeep(bytes calldata /*checkData*/) external override {}
+
     // Pick Random Winner using chainlink VRF
     function requestRandomWinner() external {
         // Will revert if subscription is not set and funded.
+        s_raffleState = RaffleState.CALCULATING;
         uint256 requestId = i_vrfCoordinator.requestRandomWords(
             i_gasLane, // gasLane
             i_subscription,
@@ -74,6 +88,7 @@ contract Raffle is VRFConsumerBaseV2 {
         uint256 indexOfWinner = randomWords[0] % s_players.length;
         address payable recentWinner = s_players[indexOfWinner];
         s_recentWinner = recentWinner;
+        s_raffleState = RaffleState.OPEN;
         (bool callSuccess, ) = recentWinner.call{value: address(this).balance}(
             ""
         );
@@ -85,7 +100,6 @@ contract Raffle is VRFConsumerBaseV2 {
     }
 
     // View and Pure Functions
-    // Get Entrance Fee
     function getEntranceFee() public view returns (uint256) {
         return i_entracefee;
     }
@@ -98,7 +112,7 @@ contract Raffle is VRFConsumerBaseV2 {
         return s_recentWinner;
     }
 
-    function getRecentWinners() public view returns (address[] memory) {
+    function getWinners() public view returns (address[] memory) {
         return s_winners;
     }
 }
