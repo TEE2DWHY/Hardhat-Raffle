@@ -13,17 +13,19 @@ module.exports = {
   defaultNetwork: "hardhat",
   networks: {
     hardhat: {
-      chainId: "31337",
-      blockConfirmation: 6,
+      chainId: 31337,
+      blockConfirmations: 1,
     },
     goerli: {
       url: GOERLI_URL,
       chainId: 5,
-      blockConfirmation: 6,
+      blockConfirmations: 6,
       accounts: [PRIVATE_KEY],
     },
   },
-  solidity: "0.8.19",
+  solidity: {
+    compilers: [{ version: "0.8.19" }, { version: "0.8" }],
+  },
   namedAccounts: {
     deployer: {
       default: 0,
