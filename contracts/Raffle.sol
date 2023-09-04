@@ -18,6 +18,13 @@ import "@chainlink/contracts/src/v0.8/VRFConsumerBaseV2.sol";
 import "@chainlink/contracts/src/v0.8/interfaces/VRFCoordinatorV2Interface.sol";
 import "@chainlink/contracts/src/v0.8/AutomationCompatible.sol";
 
+/**
+ * @title A sample Raffle Contract
+ * @author Olorunfemi Tayo
+ * @notice This contract is for creating a untamperable decentralized smart contract
+ * @dev This implements chainlink VRF2 and chainlink keepers.
+ */
+
 contract Raffle is VRFConsumerBaseV2, AutomationCompatibleInterface {
     // Type Declaration
     enum RaffleState {
@@ -150,5 +157,21 @@ contract Raffle is VRFConsumerBaseV2, AutomationCompatibleInterface {
 
     function getWinners() public view returns (address[] memory) {
         return s_winners;
+    }
+
+    function getRaffleState() public view returns (RaffleState) {
+        return s_raffleState;
+    }
+
+    function getNumWords() public pure returns (uint32) {
+        return NUM_WORDS;
+    }
+
+    function getNumberOfPlayers() public view returns (uint256) {
+        return s_players.length;
+    }
+
+    function getLatestTimestamp() public view returns (uint256) {
+        return s_lastBlockTimeStamp;
     }
 }
