@@ -1,23 +1,23 @@
-const { network, ethers } = require("hardhat");
-const { developmentChains } = require("../helper-hardhat-config");
+const { network } = require("hardhat");
 
-const BASE_FEE = ethers.utils.parseEther("0.25"); // it is premium. it cost 0.25 link link per request.
-const GAS_PRICE_LINK = 1e9; // link per gas
-const deployMock = async ({ getNamedAccounts, deployments }) => {
+const BASE_FEE = "250000000000000000"; // 0.25 is this the premium in LINK?
+const GAS_PRICE_LINK = 1e9; // link per gas, is this the gas lane? // 0.000000001 LINK per gas
+
+module.exports = async ({ getNamedAccounts, deployments }) => {
   const { deploy, log } = deployments;
-  const { deployer } = getNamedAccounts();
-  const args = [BASE_FEE, GAS_PRICE_LINK];
-  if (developmentChains.includes(network.name)) {
-    console.log("Local network detected...deploying mocks");
-    await deploy("vrfCoordinatorV2MockV2", {
+  const { deployer } = await getNamedAccounts();
+  const chainId = network.config.chainId;
+  // If we are on a local development network, we need to deploy mocks!
+  if (chainId == 31337) {
+    log("Local network detected! Deploying mocks...");
+    await deploy("VRFCoordinatorV2Mock", {
       from: deployer,
-      contract: "MockV3Aggregator",
       log: true,
-      args: [args],
+      args: [BASE_FEE, GAS_PRICE_LINK],
     });
-    log("Mocks Deployed");
-    log("-------------------------------------");
+
+    log("Mocks Deployed!");
+    log("----------------------------------------------------------");
   }
 };
-
 module.exports.tags = ["all", "mocks"];
