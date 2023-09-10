@@ -2,8 +2,8 @@
   "_format": "hh-sol-cache-2",
   "files": {
     "/Users/apple/Documents/Dev/web3/hardhat-raffle/contracts/Raffle.sol": {
-      "lastModificationDate": 1693827544851,
-      "contentHash": "7838b0c388fb98c08a7c6a6995676b77",
+      "lastModificationDate": 1694350976220,
+      "contentHash": "767c06fed0e8dd4ee2d86fdb259d1978",
       "sourceName": "contracts/Raffle.sol",
       "solcConfig": {
         "version": "0.8.19",
@@ -89,48 +89,6 @@
         "VRFConsumerBaseV2"
       ]
     },
-    "/Users/apple/Documents/Dev/web3/hardhat-raffle/node_modules/@chainlink/contracts/src/v0.8/interfaces/VRFCoordinatorV2Interface.sol": {
-      "lastModificationDate": 1691697543249,
-      "contentHash": "8c9ed3426b676f67ee200a2bec96e224",
-      "sourceName": "@chainlink/contracts/src/v0.8/interfaces/VRFCoordinatorV2Interface.sol",
-      "solcConfig": {
-        "version": "0.8.19",
-        "settings": {
-          "optimizer": {
-            "enabled": false,
-            "runs": 200
-          },
-          "outputSelection": {
-            "*": {
-              "*": [
-                "abi",
-                "evm.bytecode",
-                "evm.deployedBytecode",
-                "evm.methodIdentifiers",
-                "metadata",
-                "devdoc",
-                "userdoc",
-                "storageLayout",
-                "evm.gasEstimates"
-              ],
-              "": [
-                "ast"
-              ]
-            }
-          },
-          "metadata": {
-            "useLiteralContent": true
-          }
-        }
-      },
-      "imports": [],
-      "versionPragmas": [
-        "^0.8.0"
-      ],
-      "artifacts": [
-        "VRFCoordinatorV2Interface"
-      ]
-    },
     "/Users/apple/Documents/Dev/web3/hardhat-raffle/node_modules/@chainlink/contracts/src/v0.8/AutomationCompatible.sol": {
       "lastModificationDate": 1691697543187,
       "contentHash": "c962c53a75d722542c83859d848edd5b",
@@ -174,6 +132,48 @@
       ],
       "artifacts": [
         "AutomationCompatible"
+      ]
+    },
+    "/Users/apple/Documents/Dev/web3/hardhat-raffle/node_modules/@chainlink/contracts/src/v0.8/interfaces/VRFCoordinatorV2Interface.sol": {
+      "lastModificationDate": 1691697543249,
+      "contentHash": "8c9ed3426b676f67ee200a2bec96e224",
+      "sourceName": "@chainlink/contracts/src/v0.8/interfaces/VRFCoordinatorV2Interface.sol",
+      "solcConfig": {
+        "version": "0.8.19",
+        "settings": {
+          "optimizer": {
+            "enabled": false,
+            "runs": 200
+          },
+          "outputSelection": {
+            "*": {
+              "*": [
+                "abi",
+                "evm.bytecode",
+                "evm.deployedBytecode",
+                "evm.methodIdentifiers",
+                "metadata",
+                "devdoc",
+                "userdoc",
+                "storageLayout",
+                "evm.gasEstimates"
+              ],
+              "": [
+                "ast"
+              ]
+            }
+          },
+          "metadata": {
+            "useLiteralContent": true
+          }
+        }
+      },
+      "imports": [],
+      "versionPragmas": [
+        "^0.8.0"
+      ],
+      "artifacts": [
+        "VRFCoordinatorV2Interface"
       ]
     },
     "/Users/apple/Documents/Dev/web3/hardhat-raffle/node_modules/@chainlink/contracts/src/v0.8/AutomationBase.sol": {
@@ -348,50 +348,8 @@
         "LinkTokenInterface"
       ]
     },
-    "/Users/apple/Documents/Dev/web3/hardhat-raffle/contracts/test/vrfCoordinatorV2Mock.sol": {
-      "lastModificationDate": 1693834204075,
-      "contentHash": "35642c8c75ca7dd9caeeba28c8378adf",
-      "sourceName": "contracts/test/vrfCoordinatorV2Mock.sol",
-      "solcConfig": {
-        "version": "0.8.19",
-        "settings": {
-          "optimizer": {
-            "enabled": false,
-            "runs": 200
-          },
-          "outputSelection": {
-            "*": {
-              "*": [
-                "abi",
-                "evm.bytecode",
-                "evm.deployedBytecode",
-                "evm.methodIdentifiers",
-                "metadata",
-                "devdoc",
-                "userdoc",
-                "storageLayout",
-                "evm.gasEstimates"
-              ],
-              "": [
-                "ast"
-              ]
-            }
-          },
-          "metadata": {
-            "useLiteralContent": true
-          }
-        }
-      },
-      "imports": [
-        "@chainlink/contracts/src/v0.8/mocks/VRFCoordinatorV2Mock.sol"
-      ],
-      "versionPragmas": [
-        "^0.8.19"
-      ],
-      "artifacts": []
-    },
     "/Users/apple/Documents/Dev/web3/hardhat-raffle/contracts/test/VRFCoordinatorV2Mock.sol": {
-      "lastModificationDate": 1694272872920,
+      "lastModificationDate": 1694362729067,
       "contentHash": "35642c8c75ca7dd9caeeba28c8378adf",
       "sourceName": "contracts/test/VRFCoordinatorV2Mock.sol",
       "solcConfig": {

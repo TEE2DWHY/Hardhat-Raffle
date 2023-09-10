@@ -30,6 +30,15 @@ module.exports = {
     deployer: {
       default: 0,
     },
-    player: 1,
+    player: {
+      default: 1,
+    },
+  },
+  gasReporter: {
+    enabled: false,
+    currency: "USD",
+    outputFile: "gas-report.txt",
+    noColors: true,
+    // coinmarketcap: process.env.COINMARKETCAP_API_KEY,
   },
 };

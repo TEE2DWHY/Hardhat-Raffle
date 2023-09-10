@@ -3,23 +3,23 @@ const {
   developmentChains,
   networkConfig,
 } = require("../helper-hardhat-config");
-const { verifyContract } = require("../utils/verify");
+const verifyContract = require("../utils/verify");
 const VRF_SUB_AMOUNT = ethers.utils.parseEther("2");
 
 module.exports = async ({ getNamedAccounts, deployments }) => {
-  let VRFCoordinatorV2Address, subscriptionId;
+  let VRFCoordinatorV2Address, subscriptionId, VRFCoordinatorV2Mock;
   const chainId = network.config.chainId;
   const { deploy, log } = deployments;
   const { deployer } = await getNamedAccounts();
-  if (developmentChains.includes(network.name)) {
-    const VRFCoordinatorV2 = await ethers.getContractAt("VRFCoordinatorV2Mock");
-    VRFCoordinatorV2Address = VRFCoordinatorV2.address;
-    const transactionResponse = await VRFCoordinatorV2.createSubscription();
-    const transactionReceipt = await transactionResponse.wait(1);
+  if (chainId == 31337) {
+    VRFCoordinatorV2Mock = await ethers.getContractAt("VRFCoordinatorV2Mock");
+    VRFCoordinatorV2Address = VRFCoordinatorV2Mock.address;
+    const transactionResponse = await VRFCoordinatorV2Mock.createSubscription();
+    const transactionReceipt = await transactionResponse.wait();
     subscriptionId = transactionReceipt.events[0].args.subId;
     // Fund Subscription
     // Usually we would need link token on a real network
-    await VRFCoordinatorV2.fundSubscription(subscriptionId, VRF_SUB_AMOUNT);
+    await VRFCoordinatorV2Mock.fundSubscription(subscriptionId, VRF_SUB_AMOUNT);
   } else {
     VRFCoordinatorV2Address = networkConfig[chainId]["VRFCoordinatorV2"];
     subscriptionId = networkConfig[chainId]["subscriptionId"];
