@@ -41,4 +41,10 @@ module.exports = {
     noColors: true,
     // coinmarketcap: process.env.COINMARKETCAP_API_KEY,
   },
+  mocha: {
+    timeout: 500000, // 500 seconds max for running tests
+  },
 };
+
+// This is the code to redeploy to the same contract: npx hardhat verify --network goerli DEPLOYED_CONTRACT_ADDRESS "Constructor argument 1" "Constructor argument 2" ...
+// Replace DEPLOYED_CONTRACT_ADDRESS with the actual address of your deployed contract and provide any constructor arguments if your contract has them.
